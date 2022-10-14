@@ -5,20 +5,20 @@
   
   .Button {
     cursor: pointer;
-    color: #64ed85;
+    color: #044411;
     padding: 15px 35px;
     margin-bottom: 20px;
   
     text-decoration: none;
     overflow: hidden;
     border-radius: 5px;
-    border-color: #64ed85;
+    border-color: rgba(241, 245, 9, 0.2);
     transition: background 0.5s, color 0.5s;
   }
   
   .Button:hover {
-    background-color: #64ed85;
-    box-shadow: 0 0 40px #64ed85;
+    background-color: rgba(152, 201, 111, 0.747);
+    box-shadow: 0 0 10px rgba(152, 201, 111, 0.747);
     transition: background 0.5s, color 0.5s;
     filter: hue-rotate(20deg);
     color: blanchedalmond;
