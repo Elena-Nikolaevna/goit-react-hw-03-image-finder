@@ -21,9 +21,13 @@ function ImageGalleryItem({ articles, onImage }) {
 export default ImageGalleryItem;
 
 ImageGalleryItem.propTypes = {
-  id: PropTypes.string,
-  webformatURL: PropTypes.string,
-  largeImageURL: PropTypes.string,
-  tags: PropTypes.string,
+  articles: PropTypes.arrayOf(
+    PropTypes.shape({
+      id: PropTypes.number.isRequired,
+      webformatURL: PropTypes.string.isRequired,
+      tags: PropTypes.string.isRequired,
+      largeImageURL: PropTypes.string.isRequired,
+    })
+  ),
   onImage: PropTypes.func.isRequired,
 };
