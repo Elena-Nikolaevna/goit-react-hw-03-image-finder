@@ -1,93 +1,121 @@
-import { Component } from 'react';
-import axios from 'axios';
-import Notiflix from 'notiflix';
-import { BASE_URL, API_KEY, SEARCH_PARAMS } from '../services/ImagesAPI';
-import Searchbar from './Searchbar/Searchbar';
-import LoadMoreBtn from './LoadMoreBtn/LoadMoreBtn';
-import ImageGallery from './ImageGallery/ImageGallery';
-import ImageGalleryItem from './ImageGalleryItem/ImageGalleryItem';
-import Modal from './Modal/Modal';
-import SpinnerLoader from './Loader/Loader';
+import { Component } from 'react'; //+
+import { getImages } from '../services/ImagesAPI'; //+
+import { Searchbar } from './Searchbar/Searchbar'; //+
+import { LoadMoreBtn } from './LoadMoreBtn/LoadMoreBtn'; //+
+import { ImageGallery } from './ImageGallery/ImageGallery'; //+
+import  SpinnerLoader  from './Loader/Loader'; //+
+import { Modal } from './Modal/Modal';
+//import axios from 'axios';
+//import Notiflix from 'notiflix';
+
+//import ImageGalleryItem from './ImageGalleryItem/ImageGalleryItem';
+//import Modal from './Modal/Modal';
 
 export class App extends Component {
   state = {
-    hits: [],
-    name: '',
-    page: 1,
-    showModal: false,
-    loading: false,
-    largeImageURL: '',
-    tags: '',
+    query: '',
+    pageNumber: 1,
+    totalPages: 0,
+    status: 'idle',
+    images: [],
+    isModal: false,
+    currentImage: {},
+    error: '',
   };
 
-  toggleModal = (imageURL, tag, id) => {
-    this.setState(({ showModal }) => ({
-      showModal: !showModal,
-      largeImageURL: imageURL,
-      tags: tag,
-    }));
-  };
+  componentDidUpdate(_, prevState) {
+    const { query, pageNumber } = this.state;
+    const currentQuery = query;
+    const currentPage = pageNumber;
 
-  getValue = ({ name, page }) => {
-    this.setState({ loading: true });
-    try {
-      axios
-        .get(
-          `${BASE_URL}?key=${API_KEY}&q=${name}&page=${page}&${SEARCH_PARAMS}`
-        )
-        .then(response => {
-          if (!response.data.hits.length) {
-            Notiflix.Notify.failure('No images found!');
-          } else if (name === this.state.name) {
-            this.setState(state => ({
-              hits: [...state.hits, ...response.data.hits],
-              name: name,
-              page: state.page + 1,
-            }));
-          } else {
-            this.setState(state => ({
-              hits: response.data.hits,
-              name: name,
-              page: state.page + 1,
-            }));
+    if (
+      prevState.query !== currentQuery ||
+      prevState.pageNumber !== currentPage
+    ) {
+      this.setState({ status: 'pending' });
+      getImages(currentQuery, currentPage)
+        .then(data => {
+          if (data.hits.length === 0) {
+            return Promise.reject(new Error(`Cannot find ${currentQuery}`));
           }
+          const totalPages = Math.ceil(data.totalHits / 12);
+
+          const requiredHits = data.hits.map(
+            ({ id, webformatURL, largeImageURL, tags }) => {
+              return { id, webformatURL, largeImageURL, tags };
+            }
+          );
+          this.setState(prevState => {
+            return {
+              images: [...prevState.images, ...requiredHits],
+              totalPages: totalPages,
+            };
+          });
+        })
+        .then(() => {
+          this.setState({ status: 'done', error: '' });
+        })
+        .catch(error => {
+          this.setState({ status: 'error', error: error.message });
         });
-    } catch (error) {
-      console.error(error.message);
-    } finally {
-      this.setState({
-        loading: false,
-      });
+      return;
     }
+  }
+
+  onSearchHandle = value => {
+    this.setState({ query: value, pageNumber: 1, images: [] });
   };
 
-  loadMore = () => {
-    this.getValue(this.state);
+  onLoadMoreHandle = () => {
+    this.setState(prevState => {
+      return { pageNumber: prevState.pageNumber + 1 };
+    });
+  };
+
+  onGalleryClickHandle = imageId => {
+    const currentImage = this.state.images.find(item => {
+      return item.id === Number(imageId);
+    });
+    this.setState({ currentImage: currentImage, isModal: true });
+  };
+
+  onCloseModal = () => {
+    this.setState({ isModal: false });
   };
 
   render() {
-    const { hits, showModal, loading, largeImageURL, tags } = this.state;
+    const {
+      status,
+      images,
+      isModal,
+      currentImage,
+      error,
+      totalPages,
+      pageNumber,
+    } = this.state;
 
     return (
-      <div>
-        <Searchbar onSubmitHandler={this.getValue} />
+      <>
+        <div>
+          <Searchbar onSubmit={this.onSearchHandle} />
+          {images.length !== 0 && (
+            <ImageGallery images={images} onClick={this.onGalleryClickHandle} />
+          )}
+          {totalPages > pageNumber && (
+            <LoadMoreBtn onClick={this.onLoadMoreHandle}>Load more</LoadMoreBtn>
+          )}
 
-        {loading && <SpinnerLoader />}
-
-        {hits && (
-          <ImageGallery>
-            <ImageGalleryItem articles={hits} onImage={this.toggleModal} />
-          </ImageGallery>
-        )}
-
-        {showModal && (
-          <Modal onClose={this.toggleModal} url={largeImageURL} alt={tags} />
-        )}
-
-        {hits.length > 0 && (
-          <LoadMoreBtn onButtonClick={() => this.loadMore()} />
-        )}
-      </div>
+          {status === 'pending' && <SpinnerLoader />}
+          {isModal && (
+            <Modal
+              imageUrl={currentImage.largeImageURL}
+              alt={currentImage.tags}
+              onCloseModal={this.onCloseModal}
+            />
+          )}
+          {status === 'error' && <p>{error}</p>}
+        </div>
+      </>
     );
   }
 }
