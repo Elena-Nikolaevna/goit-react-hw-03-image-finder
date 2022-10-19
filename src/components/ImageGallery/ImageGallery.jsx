@@ -1,15 +1,33 @@
-import { Component } from 'react';
+import { ImageGalleryItem } from 'components/ImageGalleryItem/ImageGalleryItem';
 import PropTypes from 'prop-types';
 import styles from './ImageGallery.module.css';
 
-class ImageGallery extends Component {
-  render() {
-    return <ul className={styles.ImageGallery}>{this.props.children}</ul>;
-  }
-}
+export const ImageGallery = ({ images, onClick }) => {
+  return (
+    <ul className={styles.ImageGallery}>
+      {images.map((item, index) => {
+        return (
+          <ImageGalleryItem
+            onClick={onClick}
+            key={item.id}
+            imageUrl={item.webformatURL}
+            alt={item.tags}
+            id={item.id}
+          />
+        );
+      })}
+    </ul>
+  );
+};
 
 ImageGallery.propTypes = {
-  children: PropTypes.node.isRequired,
-}
-
-export default ImageGallery;
+  images: PropTypes.arrayOf(
+    PropTypes.exact({
+      id: PropTypes.number.isRequired,
+      largeImageURL: PropTypes.string.isRequired,
+      tags: PropTypes.string.isRequired,
+      webformatURL: PropTypes.string.isRequired,
+    })
+  ),
+  onClick: PropTypes.func.isRequired,
+};
