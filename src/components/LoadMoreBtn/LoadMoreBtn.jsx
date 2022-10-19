@@ -1,18 +1,17 @@
 import PropTypes from 'prop-types';
 import styles from './LoadMoreBtn.module.css';
 
-function LoadMoreBtn({ onButtonClick }) {
+export const LoadMoreBtn = ({ children, onClick }) => {
   return (
     <div className={styles.BtnContainer}>
-      <button className={styles.Button} type="button" onClick={onButtonClick}>
-        Load more
+      <button className={styles.Button} type="button"  onClick={onClick}>
+      {children}
       </button>
     </div>
   );
 }
 
-export default LoadMoreBtn;
-
 LoadMoreBtn.propTypes = {
-  onButtonClick: PropTypes.func.isRequired,
+  children: PropTypes.string,
+  onClick: PropTypes.func.isRequired,
 };
