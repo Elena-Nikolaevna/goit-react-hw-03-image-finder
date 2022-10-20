@@ -1,7 +1,9 @@
 import PropTypes from 'prop-types';
-import styles from './Modal.module.css';
+//import styles from './Modal.module.css';
 import { createPortal } from 'react-dom';
 import { Component } from 'react';
+import { Overlay, ModalWindow } from './Modal.styled';
+
 
 const modalRoot = document.querySelector('#modal-root');
 
@@ -23,7 +25,7 @@ export class Modal extends Component {
   render() {
     const { onCloseModal, imageUrl, alt } = this.props;
     return createPortal(
-      <div className={styles.Overlay}
+      <Overlay
         onClick={event => {
           if (event.target !== event.currentTarget) {
             return;
@@ -31,10 +33,10 @@ export class Modal extends Component {
           onCloseModal();
         }}
       >
-        <div className={styles.Modal}>
+        <ModalWindow>
           <img src={imageUrl} alt={alt} />
-        </div>
-      </div>,
+        </ModalWindow>
+      </Overlay>,
       modalRoot
     );
   }
