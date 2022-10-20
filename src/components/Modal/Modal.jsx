@@ -5,7 +5,7 @@ import { Component } from 'react';
 import { Overlay, ModalWindow } from './Modal.styled';
 
 
-const modalRoot = document.querySelector('#modal-root');
+
 
 export class Modal extends Component {
   componentDidMount() {
@@ -37,7 +37,7 @@ export class Modal extends Component {
           <img src={imageUrl} alt={alt} />
         </ModalWindow>
       </Overlay>,
-      modalRoot
+      
     );
   }
 }
