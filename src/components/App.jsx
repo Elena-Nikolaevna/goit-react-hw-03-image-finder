@@ -3,7 +3,7 @@ import { getImages } from '../services/ImagesAPI'; //+
 import { Searchbar } from './Searchbar/Searchbar'; //+
 import { LoadMoreBtn } from './LoadMoreBtn/LoadMoreBtn'; //+
 import { ImageGallery } from './ImageGallery/ImageGallery'; //+
-import  SpinnerLoader  from './Loader/Loader'; //+
+import  {Loader}  from './Loader/Loader'; //+
 import { Modal } from './Modal/Modal';
 //import axios from 'axios';
 //import Notiflix from 'notiflix';
@@ -105,7 +105,7 @@ export class App extends Component {
             <LoadMoreBtn onClick={this.onLoadMoreHandle}>Load more</LoadMoreBtn>
           )}
 
-          {status === 'pending' && <SpinnerLoader />}
+          {status === 'pending' && <Loader />}
           {isModal && (
             <Modal
               imageUrl={currentImage.largeImageURL}
