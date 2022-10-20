@@ -1,14 +1,14 @@
 import PropTypes from 'prop-types';
+import { Item, Img } from './ImageGalleryItem.styled';
 //import { Modal } from 'components/Modal/Modal';
 //import { Component } from 'react';
-import styles from './ImageGalleryItem.module.css';
+//import styles from './ImageGalleryItem.module.css';
 
 
 export const ImageGalleryItem = ({ imageUrl, alt, id, onClick }) => {
   return (
-    <li className={styles.ImageGalleryItem}>
-      <img
-      className={styles.ImageGalleryItemImage}
+    <Item>
+      <Img
         src={imageUrl}
         alt={alt}
         id={id}
@@ -16,7 +16,7 @@ export const ImageGalleryItem = ({ imageUrl, alt, id, onClick }) => {
           onClick(evt.target.id);
         }}
       />
-    </li>
+    </Item>
   );
 };
 
