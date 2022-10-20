@@ -5,6 +5,8 @@ import { LoadMoreBtn } from './LoadMoreBtn/LoadMoreBtn'; //+
 import { ImageGallery } from './ImageGallery/ImageGallery'; //+
 import  {Loader}  from './Loader/Loader'; //+
 import { Modal } from './Modal/Modal';
+import { GlobalStyle } from './GlobalStyles';
+import { Container } from './App.styled';
 //import axios from 'axios';
 //import Notiflix from 'notiflix';
 
@@ -23,7 +25,7 @@ export class App extends Component {
     error: '',
   };
 
-  componentDidUpdate(_, prevState) {
+  componentDidUpdate(prevProps, prevState) {
     const { query, pageNumber } = this.state;
     const currentQuery = query;
     const currentPage = pageNumber;
@@ -96,7 +98,7 @@ export class App extends Component {
 
     return (
       <>
-        <div>
+        <Container>
           <Searchbar onSubmit={this.onSearchHandle} />
           {images.length !== 0 && (
             <ImageGallery images={images} onClick={this.onGalleryClickHandle} />
@@ -114,7 +116,8 @@ export class App extends Component {
             />
           )}
           {status === 'error' && <p>{error}</p>}
-        </div>
+        </Container>
+        <GlobalStyle />
       </>
     );
   }
