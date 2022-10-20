@@ -4,8 +4,7 @@ import { createPortal } from 'react-dom';
 import { Component } from 'react';
 import { Overlay, ModalWindow } from './Modal.styled';
 
-
-
+const domNode = document.querySelector('#root');
 
 export class Modal extends Component {
   componentDidMount() {
@@ -25,19 +24,19 @@ export class Modal extends Component {
   render() {
     const { onCloseModal, imageUrl, alt } = this.props;
     return createPortal(
-      <Overlay
+      <Overlay 
         onClick={event => {
           if (event.target !== event.currentTarget) {
             return;
           }
           onCloseModal();
-        }}
+        }} domNode
       >
         <ModalWindow>
           <img src={imageUrl} alt={alt} />
         </ModalWindow>
       </Overlay>,
-      
+      domNode
     );
   }
 }
